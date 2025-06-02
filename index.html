@@ -140,19 +140,19 @@
             y: {
               ticks: {
                 font: { size: 10 },
-                padding: 0 // Minimizes space between tick labels
+                padding: 0 // Élimination des marges
               },
               grid: {
                 display: true,
-                color: '#ddd', // Add grid lines
+                color: '#ddd',
                 lineWidth: 0.5,
-                drawBorder: false // Avoid border duplication
+                drawBorder: false // Pas de bordures en double
               }
             }
           },
-          barThickness: 20, // Retains the bar thickness
-          categoryPercentage: 1.0, // Minimizes spacing between groups
-          barPercentage: 1.0 // Ensures bars use full category width
+          barThickness: 20, // Taille actuelle des barres
+          categoryPercentage: 1.0, // Aucun espace entre les groupes
+          barPercentage: 1.0 // Utilisation maximale de la largeur
         },
         plugins: [ChartDataLabels]
       });
