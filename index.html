@@ -1,55 +1,34 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <title>Antennes 5G par fréquence</title>
+  <title>Antennes 5G</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 20px;
-      background-color: #f8f8f8;
+      padding: 0;
+      background-color: #fff;
       color: #333;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    p {
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto 30px auto;
-      font-size: 16px;
     }
 
     .chart-container {
       width: 100%;
       max-width: 900px;
       margin: 0 auto;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 10px;
     }
 
     canvas {
       width: 100% !important;
-      height: auto !important;
+      height: 500px !important;
       display: block;
     }
   </style>
 </head>
 <body>
-
-  <h1>Répartition des antennes 5G par fréquence</h1>
-  <p>
-    Vous trouverez ci-dessous les graphiques représentant le nombre d'antennes par fréquence pour chaque opérateur, répartis par année de données.
-  </p>
 
   <div class="chart-container">
     <canvas id="antennaChart"></canvas>
@@ -62,7 +41,7 @@
       Swisscom: 'https://raw.githubusercontent.com/AntenneCarte/antenne5g/main/Swisscom-5G.geojson'
     };
 
-    const freqLabels = ["< 900 MHz", "900–1000 MHz", "1000–3000 MHz", "> 3000 MHz"];
+    const freqLabels = ["750 MHz", "950 MHz", "2100 MHz", "3500 MHz"];
 
     const operatorColors = {
       Sunrise: 'rgba(255, 0, 0, 0.6)',
@@ -126,28 +105,54 @@
         },
         options: {
           responsive: true,
-          maintainAspectRatio: true,
+          maintainAspectRatio: false,
           indexAxis: 'y',
-          interaction: { mode: null },
-          events: [],
+          layout: {
+            padding: 0
+          },
           plugins: {
             legend: {
-              position: 'top'
+              display: true,
+              position: 'top',
+              labels: {
+                boxWidth: 10,
+                font: {
+                  size: 12
+                }
+              }
             },
             datalabels: {
               anchor: 'end',
               align: 'right',
               color: '#000',
-              font: { weight: 'bold' },
+              font: { weight: 'bold', size: 10 },
               formatter: value => value
             }
           },
           scales: {
             x: {
               beginAtZero: true,
-              ticks: { precision: 0 }
+              ticks: { precision: 0, font: { size: 10 } },
+              grid: {
+                display: false
+              }
+            },
+            y: {
+              ticks: {
+                font: { size: 10 },
+                padding: 0 // Minimizes space between tick labels
+              },
+              grid: {
+                display: true,
+                color: '#ddd', // Add grid lines
+                lineWidth: 0.5,
+                drawBorder: false // Avoid border duplication
+              }
             }
-          }
+          },
+          barThickness: 20, // Retains the bar thickness
+          categoryPercentage: 1.0, // Minimizes spacing between groups
+          barPercentage: 1.0 // Ensures bars use full category width
         },
         plugins: [ChartDataLabels]
       });
