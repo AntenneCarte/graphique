@@ -1,37 +1,40 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <title>Antennes 5G</title>
+  <meta charset="UTF-8">
+  <title>Graphiques Antennes</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #fff;
-      color: #333;
+    .charts-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px auto;
+      max-width: 1000px;
     }
 
     .chart-container {
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 10px;
+      flex: 1 1 400px;
+      max-width: 480px;
+      padding: 5px;
+      box-sizing: border-box;
     }
 
     canvas {
       width: 100% !important;
-      height: 500px !important;
+      height: 400px !important;
       display: block;
     }
   </style>
 </head>
 <body>
 
-  <div class="chart-container">
-    <canvas id="antennaChart"></canvas>
+  <div class="charts-wrapper">
+    <div class="chart-container">
+      <canvas id="antennaChart1"></canvas>
+    </div>
   </div>
 
   <script>
@@ -42,25 +45,20 @@
     };
 
     const freqLabels = ["750 MHz", "950 MHz", "2100 MHz", "3500 MHz"];
+    const operators = ["Sunrise", "Salt", "Swisscom"];
+
+    const freqColors = {
+      "750 MHz": 'rgba(255, 99, 132, 0.6)',
+      "950 MHz": 'rgba(54, 162, 235, 0.6)',
+      "2100 MHz": 'rgba(255, 206, 86, 0.6)',
+      "3500 MHz": 'rgba(128, 0, 128, 0.6)'
+    };
 
     const operatorColors = {
       Sunrise: 'rgba(255, 0, 0, 0.6)',
       Salt: 'rgba(0, 128, 0, 0.6)',
       Swisscom: 'rgba(0, 0, 255, 0.6)'
     };
-
-    const borderColors = {
-      Sunrise: 'rgba(255, 0, 0, 1)',
-      Salt: 'rgba(0, 128, 0, 1)',
-      Swisscom: 'rgba(0, 0, 255, 1)'
-    };
-
-    function getFrequencyGroup(freq) {
-      if (freq < 900) return 0;
-      else if (freq <= 1000) return 1;
-      else if (freq <= 3000) return 2;
-      else return 3;
-    }
 
     async function loadData() {
       const operatorData = {
@@ -86,79 +84,55 @@
       return operatorData;
     }
 
-    function renderChart(data) {
-      const ctx = document.getElementById("antennaChart").getContext("2d");
+    function getFrequencyGroup(freq) {
+      if (freq < 900) return 0;
+      else if (freq <= 1000) return 1;
+      else if (freq <= 3000) return 2;
+      else return 3;
+    }
 
-      const datasets = Object.keys(data).map(operator => ({
+    function renderCharts(data) {
+      const ctx1 = document.getElementById("antennaChart1").getContext("2d");
+      const datasets1 = operators.map(operator => ({
         label: operator,
         data: data[operator],
         backgroundColor: operatorColors[operator],
-        borderColor: borderColors[operator],
+        borderColor: operatorColors[operator],
         borderWidth: 1
       }));
 
-      new Chart(ctx, {
+      new Chart(ctx1, {
         type: 'bar',
         data: {
           labels: freqLabels,
-          datasets: datasets
+          datasets: datasets1
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          indexAxis: 'y',
-          layout: {
-            padding: 0
-          },
           plugins: {
-            legend: {
-              display: true,
-              position: 'top',
-              labels: {
-                boxWidth: 10,
-                font: {
-                  size: 12
-                }
-              }
-            },
+            legend: { display: true },
             datalabels: {
               anchor: 'end',
-              align: 'right',
+              align: 'top',
+              formatter: (value) => value > 0 ? value : '',
               color: '#000',
-              font: { weight: 'bold', size: 10 },
-              formatter: value => value
+              font: {
+                weight: 'bold'
+              }
             }
           },
           scales: {
-            x: {
-              beginAtZero: true,
-              ticks: { precision: 0, font: { size: 10 } },
-              grid: {
-                display: false
-              }
-            },
-            y: {
-              ticks: {
-                font: { size: 10 },
-                padding: 0 // Élimination des marges
-              },
-              grid: {
-                display: true,
-                color: '#ddd',
-                lineWidth: 0.5,
-                drawBorder: false // Pas de bordures en double
-              }
-            }
-          },
-          barThickness: 20, // Taille actuelle des barres
-          categoryPercentage: 1.0, // Aucun espace entre les groupes
-          barPercentage: 1.0 // Utilisation maximale de la largeur
+            x: { beginAtZero: true },
+            y: { beginAtZero: true }
+          }
         },
         plugins: [ChartDataLabels]
       });
     }
 
-    loadData().then(renderChart).catch(err => console.error("Erreur chargement données :", err));
+    loadData().then(renderCharts).catch(err => console.error("Erreur lors du chargement des données :", err));
   </script>
+
 </body>
 </html>
